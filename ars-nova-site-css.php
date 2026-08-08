@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ars Nova Site CSS
  * Description: Two things. (1) The SEASON STYLE SHEET — season-scoped typography, opt-in per block, so a heading can be a season heading without changing the site's default headings. (2) A small set of front-end CSS fixes. Site-wide typography is NOT set here — that lives in Appearance > Customize > Typography so the theme's own UI stays truthful.
- * Version: 2.3.0
+ * Version: 2.4.0
  * Author: Ars Nova (Jonathan Raabe) + Claude
  * Requires at least: 5.8
  * Requires PHP: 7.4
@@ -12,7 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ANS_SITE_CSS_VERSION', '2.1.0' );
+/**
+ * Keep this in step with the `Version:` header above and the release tag.
+ * See claude/plugins/Ars_Nova_Plugin_Build_Rules.md rule 2.
+ *
+ * These had DRIFTED: as of 2026-08-08 the header said 2.3.0 while this
+ * constant still said 2.1.0, so any report of the constant named a version
+ * that was never released. Change both together, every time.
+ */
+define( 'ANS_SITE_CSS_VERSION', '2.4.0' );
 define( 'ANS_SITE_CSS_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once ANS_SITE_CSS_DIR . 'season-stylesheet.php';
