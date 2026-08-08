@@ -62,6 +62,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * clears 320px comfortably. A LONGER season name needs a LOWER floor — check it
  * when you roll the season over.
  *
+ * ON `title_weight`
+ * -----------------
+ * Kadence sets `h1 { font-weight: 700 }` globally, so without this the season
+ * lockup renders BOLD by inheritance — never a deliberate choice, just the
+ * site's default h1 weight leaking into a display face. Cinzel is loaded at
+ * 400;500;600;700 (see `google_url`), so any of those work here without
+ * touching the font request. A different season face may need a different
+ * value; check what weights its `google_url` actually loads before setting it.
+ *
  * @return array
  */
 function ans_season_tokens() {
@@ -72,6 +81,7 @@ function ans_season_tokens() {
 		'google_url'   => 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap',
 		'tracking'     => '0.16em',
 		'title_size'   => 'clamp(1.75rem, 9vw, 8.5rem)',
+		'title_weight' => '400',
 	);
 }
 
@@ -209,11 +219,17 @@ p.ans-season-tagline {
    capitals. clamp() scales it with the viewport instead of needing
    breakpoints. The negative margin-right cancels the trailing letter-space
    CSS adds after the final letter, which otherwise nudges centred text
-   fractionally off centre. */
+   fractionally off centre.
+
+   font-weight is set explicitly because Kadence declares a global
+   `h1 { font-weight: 700 }`; without this the lockup inherits BOLD, which was
+   never a deliberate choice. `.ans-season-title` (0,1,0) outranks the theme's
+   bare `h1` (0,0,1), so this needs no !important. Changed 2026-08-08. */
 .ans-season-title,
 .is-style-ans-season-title {
 	font-family: var(--ans-season-display);
 	font-size: <?php echo esc_html( $t['title_size'] ); ?>;
+	font-weight: <?php echo esc_html( $t['title_weight'] ); ?>;
 	letter-spacing: var(--ans-season-tracking);
 	margin-right: calc(var(--ans-season-tracking) * -1);
 	line-height: 1.05;
