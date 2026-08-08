@@ -45,6 +45,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The season's design tokens. The one place to edit each year.
  *
+ * ON `title_size` — READ BEFORE CHANGING THE FLOOR
+ * ------------------------------------------------
+ * The three clamp values are min, preferred, max. The PREFERRED value (9vw) is
+ * what makes it fluid; the MIN is a floor that stops it shrinking.
+ *
+ * A floor set too high silently breaks small screens. It was 3.25rem (52px)
+ * until 2026-08-08. 9vw only equals 52px at a 578px viewport, so every width
+ * below that froze at 52px instead of scaling. "CONFLUENCE" at 52px with 0.16em
+ * tracking is ~395px wide, which stops fitting around 500px — and the title
+ * then wrapped mid-word.
+ *
+ * Rule of thumb: the floor must be small enough that
+ * `season_name` still fits the narrowest viewport you support (320px). At
+ * 1.75rem (28px) a ten-character tracked capital lockup measures ~213px, which
+ * clears 320px comfortably. A LONGER season name needs a LOWER floor — check it
+ * when you roll the season over.
+ *
  * @return array
  */
 function ans_season_tokens() {
@@ -54,7 +71,7 @@ function ans_season_tokens() {
 		'display_font' => "'Cinzel', Georgia, 'Times New Roman', serif",
 		'google_url'   => 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap',
 		'tracking'     => '0.16em',
-		'title_size'   => 'clamp(3.25rem, 9vw, 8.5rem)',
+		'title_size'   => 'clamp(1.75rem, 9vw, 8.5rem)',
 	);
 }
 
@@ -201,6 +218,29 @@ p.ans-season-tagline {
 	margin-right: calc(var(--ans-season-tracking) * -1);
 	line-height: 1.05;
 	text-transform: uppercase;
+}
+
+/* 2a. Never split the season name mid-word.       Added 2026-08-08 (WEB-24)
+
+   Kadence's headings inherit `word-break: break-word`, which is fine for prose
+   but catastrophic for a one-word lockup: at 443px the title rendered as
+   "CONFLUEN / CE". The clamp floor above now guarantees the word fits down to
+   ~311px, so this should never trigger — it is here so that if a future season
+   name IS too long, it overflows visibly (obvious, gets fixed) rather than
+   silently breaking mid-word (looks deliberate, ships).
+
+   Selectors are h1-qualified as well as bare so this outranks the theme rule
+   regardless of which one Kadence emits. Wrapping BETWEEN words is still
+   allowed — a two-word season name will break at the space, as it should. */
+.ans-season-title,
+.is-style-ans-season-title,
+h1.ans-season-title,
+h1.is-style-ans-season-title,
+h2.ans-season-title,
+h2.is-style-ans-season-title {
+	word-break: normal;
+	overflow-wrap: normal;
+	hyphens: none;
 }
 </style>
 	<?php
